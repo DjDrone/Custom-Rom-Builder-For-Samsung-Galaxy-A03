@@ -25,17 +25,17 @@ on:
       VENDOR:
         description: 'vendor.img Direct Link'
         required: true
-        default: 'https://drive.google.com/uc?export=download&id=1ZcJVYJTB9MiU-joja5GkKMi4gpsn1qmI'
+        default: 'https://github.com/DjDrone/Custom-Rom-Builder-For-Samsung-Galaxy-A03/releases/download/build-26337100428/vendor.img'
 
       PRODUCT:
         description: 'product.img Direct Link'
         required: true
-        default: 'https://drive.google.com/uc?export=download&id=1DbRliqaggpj8JRewJNfgnI2-KF0SyIgA'
+        default: 'https://github.com/DjDrone/Custom-Rom-Builder-For-Samsung-Galaxy-A03/releases/download/build-26337100428/product.img'
 
       SYSTEMEXT:
         description: 'system_ext.img Direct Link'
         required: true
-        default: 'https://drive.google.com/uc?export=download&id=1HcuFdfKxevwyf8Mj_4u1lJ8weL_WV3XR'
+        default: 'https://github.com/DjDrone/Custom-Rom-Builder-For-Samsung-Galaxy-A03/releases/download/build-26337100428/system_ext.img'
 
 jobs:
   Build:
@@ -60,7 +60,6 @@ jobs:
       - name: Install lpmake Tools
         run: |
           git clone https://github.com/Exynos-nigg/lpunpack-lpmake-mirror.git lpbinary
-
           cd lpbinary
           chmod +x install.sh
           bash install.sh
@@ -74,7 +73,6 @@ jobs:
           cd lpbinary/binary
 
           wget -O system.img.xz "${{ github.event.inputs.GSI }}"
-
           unxz system.img.xz
 
           mv system.img system.img || true
@@ -98,7 +96,8 @@ jobs:
           echo "=== FILE LIST ==="
           ls -lh
 
-          echo "=== VERIFYING FILES ==="
+          echo "=== FILE TYPE CHECK ==="
+          file system.img vendor.img product.img system_ext.img
 
           test -f system.img || exit 1
           test -f vendor.img || exit 1
@@ -139,18 +138,15 @@ jobs:
       - name: Create Odin Flash Package
         run: |
           cd lpbinary/binary
-
           tar -cvf super.tar super.img
           7z a "${{ github.event.inputs.NAME }}" super.tar
 
       - name: Upload Release
         uses: softprops/action-gh-release@v1
-
         with:
           files: lpbinary/binary/${{ github.event.inputs.NAME }}
           name: ${{ github.event.inputs.NAME }}-${{ github.run_id }}
           tag_name: build-${{ github.run_id }}
-
           body: |
             Device: Samsung Galaxy A03 Core
             Baseband: ${{ github.event.inputs.VERSION }}
@@ -160,6 +156,5 @@ jobs:
             2. Open Odin
             3. Put super.tar in AP slot
             4. Flash in Download Mode
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
