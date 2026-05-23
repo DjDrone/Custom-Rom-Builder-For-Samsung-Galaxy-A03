@@ -25,17 +25,17 @@ on:
       VENDOR:
         description: 'vendor.img Direct Link'
         required: true
-        default: 'https://pixeldrain.com/api/file/Zj2tx5E1'
+        default: 'https://drive.google.com/uc?export=download&id=1ZcJVYJTB9MiU-joja5GkKMi4gpsn1qmI'
 
       PRODUCT:
         description: 'product.img Direct Link'
         required: true
-        default: 'https://pixeldrain.com/api/file/wPPNFTnR'
+        default: 'https://drive.google.com/uc?export=download&id=1DbRliqaggpj8JRewJNfgnI2-KF0SyIgA'
 
       SYSTEMEXT:
         description: 'system_ext.img Direct Link'
         required: true
-        default: 'https://pixeldrain.com/api/file/Axo3RmSU'
+        default: 'https://drive.google.com/uc?export=download&id=1HcuFdfKxevwyf8Mj_4u1lJ8weL_WV3XR'
 
 jobs:
   Build:
@@ -62,9 +62,7 @@ jobs:
           git clone https://github.com/Exynos-nigg/lpunpack-lpmake-mirror.git lpbinary
 
           cd lpbinary
-
           chmod +x install.sh
-
           bash install.sh
 
       - name: Prepare Workspace
@@ -90,9 +88,7 @@ jobs:
           cd lpbinary/binary
 
           wget -O vendor.img "${{ github.event.inputs.VENDOR }}"
-
           wget -O product.img "${{ github.event.inputs.PRODUCT }}"
-
           wget -O system_ext.img "${{ github.event.inputs.SYSTEMEXT }}"
 
       - name: Verify Downloaded Files
@@ -100,7 +96,6 @@ jobs:
           cd lpbinary/binary
 
           echo "=== FILE LIST ==="
-
           ls -lh
 
           echo "=== VERIFYING FILES ==="
@@ -139,7 +134,6 @@ jobs:
       - name: Verify Super Image
         run: |
           cd lpbinary/binary
-
           ls -lh super.img
 
       - name: Create Odin Flash Package
@@ -147,7 +141,6 @@ jobs:
           cd lpbinary/binary
 
           tar -cvf super.tar super.img
-
           7z a "${{ github.event.inputs.NAME }}" super.tar
 
       - name: Upload Release
